@@ -1,0 +1,29 @@
+venv
+image
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+# Настройки с секретами
+.env
+settings_local.py
+
+# Миграции (иногда оставляют, иногда нет)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Статика и медиа
+staticfiles/
+media/
+
+# База данных
+db.sqlite3
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Виртуальное окружение
+venv/
+.env/
+.env.*
