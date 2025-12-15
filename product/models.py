@@ -10,7 +10,7 @@ class Category(models.Model):
         return self.name
 
 
-class Products(models.Model):
+class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     make = models.CharField(max_length=100)
@@ -18,6 +18,7 @@ class Products(models.Model):
     size = models.IntegerField()
     country = models.CharField(max_length=100)
     desc = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='product/',blank=True,null=True)
 
     def __str__(self):
         return f'{self.name},{self.category}'

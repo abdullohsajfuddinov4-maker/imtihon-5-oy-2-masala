@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+
+<!-- КНОПКИ КАТЕГОРИЙ -->
+<div class="category-buttons">
+    {% for c in categories %}
+        <a href="{% url 'category' c.id %}"
+           class="cat-btn {% if c.id == category.id %}active{% endif %}">
+            {{ c.name }}
+        </a>
+    {% endfor %}
+</div>
+
+<!-- НАЗВАНИЕ ТЕКУЩЕЙ КАТЕГОРИИ -->
+<h2 class="category-title">{{ category.name }}</h2>
+
+<!-- ТОВАРЫ -->
+<div class="products">
+    {% for p in products %}
+        <div class="card">
+            {% if p.image %}
+                <img src="{{ p.image.url }}" alt="{{ p.name }}">
+            {% endif %}
+
+            <h4>{{ p.name }}</h4>
+            <p>{{ p.make }}</p>
+
+            <a href="{% url 'detail' p.id %}" class="detail">Detail</a>
+        </div>
+    {% empty %}
+        <p>No products in this category.</p>
+    {% endfor %}
+</div>
+
+
+<style>
+/* Кнопки категорий */
+.category-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.cat-btn {
+    padding: 6px 14px;
+    border: 1px solid #222;
+    border-radius: 20px;
+    text-decoration: none;
+    color: #222;
+    font-size: 13px;
+}
+
+.cat-btn.active {
+    background: #222;
+    color: #fff;
+}
+
+/* Карточки */
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.card img {
+    height: 120px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.card h4 {
+    font-size: 14px;
+    margin: 6px 0 2px;
+}
+
+.card p {
+    font-size: 12px;
+    color: #555;
+    margin: 0;
+}
+
+.detail {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 12px;
+    padding: 5px 10px;
+    background: #222;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+</style>
+
+{% endblock %}

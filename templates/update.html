@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Update Product{% endblock %}
+
+{% block content %}
+<h2>Update Product</h2>
+
+<form method="post" enctype="multipart/form-data" class="form-box">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <div class="actions">
+        <button type="submit" class="btn update">Update</button>
+        <a href="{% url 'home' %}" class="btn back">Back</a>
+    </div>
+</form>
+
+<style>
+.form-box {
+    max-width: 500px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.btn {
+    padding: 8px 14px;
+    border-radius: 5px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.update {
+    background: #007bff;
+}
+
+.back {
+    background: #6c757d;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+
+<h2>Products</h2>
+
+<!-- ПОИСК -->
+<form method="get" class="search-box">
+    <input
+        type="text"
+        name="q"
+        placeholder="Search product..."
+        value="{{ q }}"
+    >
+    <button type="submit">Search</button>
+
+    {% if q %}
+        <a href="{% url 'home' %}" class="clear">Clear</a>
+    {% endif %}
+</form>
+
+<!-- СПИСОК ТОВАРОВ -->
+<div class="products">
+    {% for p in product %}
+        <div class="card">
+            {% if p.image %}
+                <img src="{{ p.image.url }}" alt="{{ p.name }}">
+            {% else %}
+                <div class="no-image">No image</div>
+            {% endif %}
+
+            <h4>{{ p.name }}</h4>
+            <p class="brand">{{ p.make }}</p>
+
+            <a href="{% url 'detail' p.id %}" class="detail-btn">
+                Detail
+            </a>
+        </div>
+    {% empty %}
+        <p>No products found.</p>
+    {% endfor %}
+</div>
+
+<style>
+/* ПОИСК */
+.search-box {
+    margin-bottom: 20px;
+}
+
+.search-box input {
+    padding: 6px 10px;
+    width: 200px;
+}
+
+.search-box button {
+    padding: 6px 12px;
+}
+
+.search-box .clear {
+    margin-left: 10px;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+/* КАРТОЧКИ (МЕНЬШЕ) */
+.products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    background: #fff;
+}
+
+.card img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.no-image {
+    height: 120px;
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+.card h4 {
+    font-size: 14px;
+    margin: 8px 0 4px;
+}
+
+.brand {
+    font-size: 12px;
+    color: #555;
+    margin: 0;
+}
+
+/* КНОПКА */
+.detail-btn {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 5px 10px;
+    background: #222;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+.detail-btn:hover {
+    background: #555;
+}
+</style>
+
+{% endblock %}

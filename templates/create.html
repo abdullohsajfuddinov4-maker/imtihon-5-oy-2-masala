@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Product{% endblock %}
+
+{% block content %}
+<h2>Create Product</h2>
+
+<form method="post" enctype="multipart/form-data" class="form-box">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <div class="actions">
+        <button type="submit" class="btn create">Create</button>
+        <a href="{% url 'home' %}" class="btn back">Back</a>
+    </div>
+</form>
+
+<style>
+.form-box {
+    max-width: 500px;
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.form-box p {
+    margin-bottom: 15px;
+}
+
+.form-box input,
+.form-box select,
+.form-box textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+.actions {
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 8px 14px;
+    border: none;
+    text-decoration: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.create {
+    background: #28a745;
+}
+
+.back {
+    background: #6c757d;
+}
+</style>
+{% endblock %}
