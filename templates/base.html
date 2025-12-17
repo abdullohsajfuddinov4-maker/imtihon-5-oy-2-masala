@@ -3,53 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}My Shop{% endblock %}</title>
+
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background-color: #f5f6fa;
         }
 
-        /* Верхняя панель */
+        /* NAVBAR */
         .navbar {
-            background-color: #222;
+            background-color: #1f1f1f;
             padding: 15px 30px;
             display: flex;
-            gap: 20px;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .navbar h4 {
+            color: white;
+            margin: 0;
+            font-weight: 500;
+            margin-right: 20px;
         }
 
         .navbar a {
-            color: white;
             text-decoration: none;
-            font-size: 16px;
-            padding: 8px 14px;
-            border-radius: 5px;
-            background-color: #444;
+            color: white;
+            background-color: #3a3a3a;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 15px;
+            transition: 0.2s;
         }
 
         .navbar a:hover {
-            background-color: #666;
+            background-color: #3498db;
         }
 
-        /* Контент */
+        /* Logout */
+        .logout {
+            background-color: #c0392b;
+        }
+
+        .logout:hover {
+            background-color: #e74c3c;
+        }
+
         .container {
             padding: 30px;
+            max-width: 1100px;
+            margin: auto;
         }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
-    <div class="navbar">
+<!-- NAVBAR -->
+<div class="navbar">
+    {% if user.is_authenticated %}
+        <h4>SHOES WELCOME {{ user.username }}</h4>
+
         <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'profile' %}">Profile</a>
         <a href="{% url 'category' 1 %}">Category</a>
         <a href="{% url 'create' %}">Create</a>
-    </div>
 
-    <!-- PAGE CONTENT -->
-    <div class="container">
-        {% block content %}
-        {% endblock %}
-    </div>
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+    {% else %}
+        <h4>SHOES</h4>
+
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'regis' %}">Register</a>
+    {% endif %}
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
 
 </body>
 </html>

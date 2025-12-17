@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+
+<div class="profile">
+
+    <h2 class="profile-title">User Profile</h2>
+
+    <div class="profile-field">
+        <span class="label">First Name:</span>
+        <span>{{ user.first_name|default:"Not provided" }}</span>
+    </div>
+
+    <div class="profile-field">
+        <span class="label">Last Name:</span>
+        <span>{{ user.last_name|default:"Not provided" }}</span>
+    </div>
+
+    <div class="profile-field">
+        <span class="label">Username:</span>
+        <span>{{ user.username }}</span>
+    </div>
+
+    <div class="profile-field">
+        <span class="label">Address:</span>
+        <span>{{ user.address|default:"Not provided" }}</span>
+    </div>
+
+    <div class="profile-image-container">
+        {% if user.image %}
+            <img src="{{ user.image.url }}" class="profile-image">
+        {% else %}
+            <span class="no-image">No image provided</span>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

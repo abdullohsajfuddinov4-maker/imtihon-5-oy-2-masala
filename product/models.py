@@ -18,7 +18,7 @@ class Product(models.Model):
     size = models.IntegerField()
     country = models.CharField(max_length=100)
     desc = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='product/',blank=True,null=True)
+    image = models.ImageField(upload_to='product/',default='product/default.jpg',blank=True,null=True)
 
     def __str__(self):
         return f'{self.name},{self.category}'

@@ -11,3 +11,9 @@ class ProductForm(forms.ModelForm):
         if len(name) < 3:
             raise forms.ValidationError("Nomi juda qisqa (min. 3 harf)")
         return name
+
+    def clean_size(self):
+        size = self.cleaned_data['size']
+        if size <= 18:
+            raise forms.ValidationError("razmer juda kichik")
+        return size
