@@ -16,6 +16,14 @@
             background-color: #1f1f1f;
             padding: 15px 30px;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
             align-items: center;
             gap: 15px;
             flex-wrap: wrap;
@@ -25,7 +33,7 @@
             color: white;
             margin: 0;
             font-weight: 500;
-            margin-right: 20px;
+            margin-right: 15px;
         }
 
         .navbar a {
@@ -52,20 +60,53 @@
 
         /* ================= CONTAINER ================= */
         .container {
-            padding: 30px;
-            max-width: 1100px;
-            margin: auto;
+            max-width: 450px;
+            margin: 40px auto;
+            padding: 25px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,.1);
         }
 
-        /* ================= IMAGES ================= */
-
-        /* Любая картинка по центру */
-        .img-center {
-            display: block;
-            margin: 0 auto;
+        /* ================= FORMS ================= */
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        /* Profile image */
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button.btn {
+            width: 100%;
+            padding: 10px;
+            background: #2c7be5;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button.btn.danger {
+            background: #dc3545;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        /* ================= PROFILE ================= */
         .profile-image-container {
             text-align: center;
             margin-top: 25px;
@@ -79,17 +120,6 @@
             border: 4px solid #3498db;
         }
 
-        /* Product image */
-        .product-image {
-            max-width: 100%;
-            height: 220px;
-            object-fit: cover;
-            border-radius: 10px;
-            display: block;
-            margin: 0 auto 10px;
-        }
-
-        /* Default image (если нет картинки) */
         .no-image {
             width: 140px;
             height: 140px;
@@ -103,116 +133,74 @@
             font-size: 14px;
         }
 
+        .profile-actions {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #2c7be5;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
         /* ================= MOBILE ================= */
         @media (max-width: 600px) {
-            .navbar {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .navbar a {
+            .nav-left,
+            .nav-right {
                 width: 100%;
-                text-align: center;
+                justify-content: center;
             }
         }
-        .container {
-    max-width: 450px;
-    margin: 40px auto;
-    padding: 25px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,.1);
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    input {
-        width: 100%;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-
-    button.btn {
-        width: 100%;
-        padding: 10px;
-        background: #2c7be5;
-        border: none;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    button.btn.danger {
-        background: #dc3545;
-    }
-
-    .alert.success {
-        background: #d4edda;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-    }
-
-    .error {
-        color: red;
-        font-size: 14px;
-    }
-
-    .profile-actions {
-    margin-top: 25px;
-    display: flex;
-    gap: 15px;
-}
-
-.btn {
-    padding: 10px 18px;
-    text-decoration: none;
-    border-radius: 6px;
-    color: white;
-    font-weight: 500;
-}
-
-.btn-primary {
-    background: #2c7be5;
-}
-
-.btn-danger {
-    background: #dc3545;
-}
-
-
     </style>
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- ================= NAVBAR ================= -->
 <div class="navbar">
-    {% if user.is_authenticated %}
-        <h4>SHOES WELCOME {{ user.username }}</h4>
+
+    <!-- LEFT -->
+    <div class="nav-left">
+        {% if user.is_authenticated %}
+            <h4>SHOES WELCOME {{ user.username }}</h4>
+        {% else %}
+            <h4>SHOES</h4>
+        {% endif %}
 
         <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'profile' %}">Profile</a>
-        <a href="{% url 'category' 1 %}">Category</a>
-        <a href="{% url 'create' %}">Create</a>
 
-        <a href="{% url 'logout' %}" class="logout">Logout</a>
-    {% else %}
-        <h4>SHOES</h4>
+        {% if user.is_authenticated %}
+            <a href="{% url 'category' 1 %}">Category</a>
+            <a href="{% url 'create' %}">Create</a>
+        {% endif %}
+    </div>
 
+    <!-- RIGHT -->
+    <div class="nav-right">
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}">Profile</a>
+            <a href="{% url 'logout' %}" class="logout">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'regis' %}">Register</a>
+        {% endif %}
+    </div>
 
-
-
-
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'regis' %}">Register</a>
-    {% endif %}
 </div>
 
-<!-- CONTENT -->
+<!-- ================= CONTENT ================= -->
 <div class="container">
     {% block content %}
     {% endblock %}
