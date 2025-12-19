@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import login, logout, authenticate
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from pyexpat.errors import messages
 
 from .forms import CustomUserRegisterForm ,CustomUserUpdateForm,CustomUserChangePasswordForm
 
@@ -45,7 +45,8 @@ class LoginView(View):
         })
 
 
-class LogoutView(View):
+class LogoutView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self, request):
         logout(request)
         return redirect('login')
@@ -58,16 +59,39 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, 'user/profile.html')
 
 
-class ProfileUpdateView(View):
-    def get(self,request):
+class ProfileUpdateView(LoginRequiredMixin, View):
+    login_url = 'login'
+
+    def get(self, request):
         form = CustomUserUpdateForm(instance=request.user)
-        return render(request,'user/profile_uodate.html',{'form':form})
+        return render(request, 'user/profile_update.html', {'form': form})
 
-    def post(self,request):
-        form = CustomUserUpdateForm(request.POST , request.FILES, instance=request.user)
+    def post(self, request):
+        form = CustomUserUpdateForm(
+            request.POST,
+            request.FILES,
+            instance=request.user
+        )
+
         if form.is_valid():
-            user = form.save()
-            redirect('profile',pk=user.pk)
-        return render(request,'user/profile_uodate.html',{'form':form})
+            form.save()
+            return redirect('profile')
+
+        return render(request, 'user/profile_update.html', {'form': form})
 
 
+class CustomUserChangePasswordFormView(LoginRequiredMixin,View):
+    login_url = 'login'
+    def get(self, request):
+        form = CustomUserChangePasswordForm(instance=request.user)
+        return render(request, 'user/change_pass.html', {'form': form})
+
+    def post(self, request):
+        form = CustomUserChangePasswordForm(data=request.POST,instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'parol yangilandi ')
+            return redirect('profile')
+
+        return render(request, 'user/change_pass.html', {'form': form})

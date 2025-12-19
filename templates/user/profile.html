@@ -36,6 +36,17 @@
         {% endif %}
     </div>
 
+    <!-- 🔽 ACTION BUTTONS -->
+    <div class="profile-actions">
+        <a href="{% url 'profile_update' %}" class="btn btn-primary">
+            Edit Profile
+        </a>
+
+        <a href="{% url 'change_password' %}" class="btn btn-danger">
+            Change Password
+        </a>
+    </div>
+
 </div>
 
 {% endblock %}

@@ -10,9 +10,9 @@ class CustomUserRegisterForm(forms.ModelForm):
 
     def clean(self):
         data = super().clean()
-        if data.get('password1') != data.get('password2') :
-            raise forms.ValidationError('password mas emas')
-        return date
+        if data.get('password1') != data.get('password2'):
+            raise forms.ValidationError('notogri ')
+        return data
 
 
 class CustomUserUpdateForm(forms.ModelForm):
@@ -27,16 +27,26 @@ class CustomUserChangePasswordForm(forms.ModelForm):
     new_password = forms.CharField(label='Confirm password',widget=forms.PasswordInput)
     confirm_new_password = forms.CharField(label='Confirm password',widget=forms.PasswordInput)
 
+    class Meta:
+        model = CustomUser
+        fields = ()
+
     def clean(self):
         date = super().clean()
         if self.data['new_password'] != self.data['confirm_new_password']:
             raise forms.ValidationError('Yangi prollar mas emas')
         return date
 
-    def save(self, commit = True):
-        user = super().save(commit=False)
-        if user.check_password(self.cleaned_data['old_password']):
-             raise forms.ValidationError('Eski parol hato')
+    def save(self, commit=True):
+        user = self.instance
+
+        if not user.check_password(self.cleaned_data['old_password']):
+            raise forms.ValidationError('eski pass')
+
         user.set_password(self.cleaned_data['new_password'])
-        user.save()
+
+        if commit:
+            user.save()
+
         return user
+
