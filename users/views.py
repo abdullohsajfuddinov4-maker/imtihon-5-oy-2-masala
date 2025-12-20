@@ -3,7 +3,7 @@ from django.views import View
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-
+from product.models import Product
 from .forms import CustomUserRegisterForm ,CustomUserUpdateForm,CustomUserChangePasswordForm
 
 
@@ -54,9 +54,10 @@ class LogoutView(LoginRequiredMixin,View):
 
 class ProfileView(LoginRequiredMixin, View):
     login_url = 'login'
-
     def get(self, request):
-        return render(request, 'user/profile.html')
+        user = request.user
+        products = user.product.all().order_by('-id')
+        return render(request, 'user/profile.html',{'user':user,'products':products})
 
 
 class ProfileUpdateView(LoginRequiredMixin, View):
