@@ -56,7 +56,7 @@ class ProfileView(LoginRequiredMixin, View):
     login_url = 'login'
     def get(self, request):
         user = request.user
-        products = user.product.all().order_by('-id')
+        products = user.products.all().order_by('-id')
         return render(request, 'user/profile.html',{'user':user,'products':products})
 
 

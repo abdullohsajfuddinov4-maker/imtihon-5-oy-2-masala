@@ -18,7 +18,13 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     make = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10,decimal_places=2)
-    ower = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='product',blank=True,null=True)
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='products',
+        blank=True,
+        null=True
+    )
     size = models.IntegerField()
     country = models.CharField(max_length=100)
     desc = models.CharField(max_length=100)
@@ -29,5 +35,16 @@ class Product(models.Model):
 
 
 class Comments(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,blank=True,null=True)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE,blank=True,null=True)
+    text = models.TextField()
+    rate = models.PositiveIntegerField()
+    image_comment = models.ImageField(upload_to='comment/',blank=True,null=True)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.text
+
 
 

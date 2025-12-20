@@ -29,19 +29,23 @@
 
         <!-- USER PRODUCTS -->
         <div class="user-products">
-            <h3>My Cars</h3>
+    <h3>My Cars</h3>
 
-            {% for product in products %}
-                <div class="product-card">
-                    <img src="{{ product.image.url }}" alt="">
-                    <p><b>{{ product.name }}</b></p>
-                    <p>{{ product.make }}</p>
-                    <p>{{ product.price }} $</p>
-                </div>
-            {% empty %}
-                <p>No products yet</p>
-            {% endfor %}
-        </div>
+    {% for product in products %}
+        <a href="{% url 'detail' product.pk %}" class="product-link">
+
+            <div class="product-card">
+                <img src="{{ product.image.url }}" alt="">
+                <p><b>{{ product.name }}</b></p>
+                <p>{{ product.make }}</p>
+                <p>{{ product.price }} $</p>
+            </div>
+
+        </a>
+    {% empty %}
+        <p>No products yet</p>
+    {% endfor %}
+</div>
 
     </div>
 

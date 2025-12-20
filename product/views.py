@@ -34,7 +34,9 @@ class ProductCreate(View):
     def post(self,request):
         form = ProductForm(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
+            product = form.save(commit=False)
+            product.owner = request.user
+            product.save()
             return redirect('home')
         return render(request, 'create.html', context={'form':form})
 
