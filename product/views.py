@@ -104,6 +104,8 @@ class ProductCategory(View):
 
 # ===================== COMMENTS =====================
 
+
+
 class CreateCommentView(LoginRequiredMixin, View):
     login_url = 'login'
 
