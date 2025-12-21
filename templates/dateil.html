@@ -39,9 +39,27 @@
             {% for comment in comments %}
                 <div class="comment-card">
                     <div class="comment-header">
-                        <span class="author">
-                            {{ comment.user.get_full_name|default:comment.user.username }}
-                        </span>
+                        <span class="author">{{ comment.user.get_full_name|default:comment.user.username }}</span>
+                            {% if comment.user == request.user %}
+    <span>
+        <a href="{% url 'update_comment' comment.pk %}">edit</a>
+    </span>
+
+    <span>
+        <form action="{% url 'delete_comment' comment.pk %}"
+              method="post"
+              style="display:inline;">
+            {% csrf_token %}
+            <button type="submit"
+                    style="background:none;border:none;color:red;cursor:pointer;">
+                delete
+            </button>
+        </form>
+    </span>
+{% endif %}
+
+
+
                         <span class="date">
                             {{ comment.create_at|date:"d.m.Y H:i" }}
                         </span>

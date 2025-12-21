@@ -1,26 +1,30 @@
-from django.db.transaction import commit
-from django.shortcuts import render ,redirect
-from django.urls import reverse_lazy
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
-from django.views import View
-from .models import Product , Category
-from .forms import ProductForm ,CommentsForm
-from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Product, Category, Comments
+from .forms import ProductForm, CommentsForm
 
-# Create your views here.
+
+# ===================== PRODUCTS =====================
 
 class ProductList(View):
-    def get(self,request):
-        product = Product.objects.all().order_by('-id')
+    def get(self, request):
+        q = request.GET.get('q', '')
+        products = Product.objects.all().order_by('-id')
+
+        if q:
+            products = products.filter(name__icontains=q)
+
         categories = Category.objects.all()
-        context = {'product': product, 'categories': categories}
-        return render(request,'home.html',context)
 
+        return render(request, 'home.html', {
+            'product': products,
+            'categories': categories,
+            'q': q
+        })
 
-
-from .forms import CommentsForm
 
 class ProductDetail(LoginRequiredMixin, View):
     login_url = 'login'
@@ -30,53 +34,54 @@ class ProductDetail(LoginRequiredMixin, View):
         comments = product.comments.all().order_by('-id')
         form = CommentsForm()
 
-        context = {
+        return render(request, 'dateil.html', {
             'product': product,
             'comments': comments,
             'form': form,
-        }
-        return render(request, 'dateil.html', context)
+        })
 
 
+class ProductCreate(LoginRequiredMixin, View):
+    login_url = 'login'
 
-class ProductCreate(View):
-    def get(self,request):
-        form = ProductForm()
-        context = {'form':form}
-        return render(request,'create.html',context)
+    def get(self, request):
+        return render(request, 'create.html', {'form': ProductForm()})
 
-    def post(self,request):
-        form = ProductForm(request.POST,request.FILES)
+    def post(self, request):
+        form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
             product = form.save(commit=False)
             product.owner = request.user
             product.save()
             return redirect('home')
-        return render(request, 'create.html', context={'form':form})
+
+        return render(request, 'create.html', {'form': form})
 
 
-class ProductUpdate(View):
-    def get(self,request,pk):
-        product = get_object_or_404(Product,pk=pk)
-        form = ProductForm(instance=product)
+class ProductUpdate(LoginRequiredMixin, View):
+    login_url = 'login'
 
-        context = {'form':form}
-        return render(request,'update.html',context)
-
-    def post(self,request,pk):
+    def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
-        form = ProductForm(request.POST,request.FILES,instance=product)
+        form = ProductForm(instance=product)
+        return render(request, 'update.html', {'form': form})
+
+    def post(self, request, pk):
+        product = get_object_or_404(Product, pk=pk)
+        form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
             return redirect('home')
-        return render(request, 'create.html', context={'form':form})
+
+        return render(request, 'update.html', {'form': form})
 
 
-class ProductDelete(View):
+class ProductDelete(LoginRequiredMixin, View):
+    login_url = 'login'
+
     def get(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
-        context = {'product': product}
-        return render(request, 'delete.html', context)
+        return render(request, 'delete.html', {'product': product})
 
     def post(self, request, pk):
         product = get_object_or_404(Product, pk=pk)
@@ -86,8 +91,8 @@ class ProductDelete(View):
 
 class ProductCategory(View):
     def get(self, request, pk):
-        categories = Category.objects.all()
         category = get_object_or_404(Category, pk=pk)
+        categories = Category.objects.all()
         products = Product.objects.filter(category=category)
 
         return render(request, 'category.html', {
@@ -97,58 +102,48 @@ class ProductCategory(View):
         })
 
 
+# ===================== COMMENTS =====================
 
+class CreateCommentView(LoginRequiredMixin, View):
+    login_url = 'login'
 
-class ProductList(View):
-    def get(self, request):
-        q = request.GET.get('q', '')
-
-        product = Product.objects.all().order_by('-id')
-
-        if q:
-            product = product.filter(name__icontains=q)
-
-        categories = Category.objects.all()
-
-        context = {
-            'product': product,
-            'categories': categories,
-            'q': q
-        }
-        return render(request, 'home.html', context)
-
-
-class CreateCommentView(View):
     def post(self, request, pk):
-        product = get_object_or_404(Product,pk=pk)
-        form = CommentsForm(request.POST,request.FILES)
+        product = get_object_or_404(Product, pk=pk)
+        form = CommentsForm(request.POST, request.FILES)
+
         if form.is_valid():
             comment = form.save(commit=False)
             comment.product = product
             comment.user = request.user
             comment.save()
-            messages.success(request,'comment qoldirdingiz')
-        else:
-            messages.success(request,'xatolik')
+
         return redirect('detail', pk=pk)
 
-class UpdateCommentView(View):
-    def get(self,request):
-        form = CommentsForm(instance=request.product)
-        context = {'form':form}
-        return render(request,'update_comment.html',context)
 
-    def posr(self,request,pk):
-        product = get_object_or_404(Product,pk=pk)
-        form = CommentsForm(request.POST,request.FILES,instance=request.product)
+class UpdateCommentView(LoginRequiredMixin, View):
+    login_url = 'login'
+
+    def get(self, request, pk):
+        comment = get_object_or_404(Comments, pk=pk, user=request.user)
+        form = CommentsForm(instance=comment)
+        return render(request, 'update_comment.html', {'form': form})
+
+    def post(self, request, pk):
+        comment = get_object_or_404(Comments, pk=pk, user=request.user)
+        form = CommentsForm(request.POST, request.FILES, instance=comment)
+
         if form.is_valid():
-            comment = form.save(commit=False)
-            comment.product = product
-            comment.user = request.user
-            comment.save()
-            messages.success(request, 'comment qoldirdingiz')
-        else:
-            messages.success(request,'xatolik')
-        return redirect('detail', pk=pk)
+            form.save()
+            return redirect('detail', pk=comment.product.id)
+
+        return render(request, 'update_comment.html', {'form': form})
 
 
+class DeleteCommentView(LoginRequiredMixin, View):
+    login_url = 'login'
+
+    def post(self, request, pk):
+        comment = get_object_or_404(Comments, pk=pk, user=request.user)
+        product_id = comment.product.id
+        comment.delete()
+        return redirect('detail', pk=product_id)

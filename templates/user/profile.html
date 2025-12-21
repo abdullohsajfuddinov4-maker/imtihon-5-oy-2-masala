@@ -50,18 +50,56 @@
     </div>
 
     <!-- RIGHT COLUMN -->
-    <div class="profile-right">
-        <h3>My Comments</h3>
+   <div class="profile-right">
+    <h3>My Comments</h3>
 
-        {% for comment in comments %}
-            <div class="comment-card">
-                <p>{{ comment.text }}</p>
-                <small>{{ comment.created_at }}</small>
+    {% for comment in comments %}
+        <div class="comment-card">
+
+            <!-- PRODUCT -->
+            <div style="display:flex;gap:10px;align-items:center;">
+                <a href="{% url 'detail' comment.product.pk %}">
+                    {% if comment.product.image %}
+                        <img src="{{ comment.product.image.url }}"
+                             style="width:60px;height:45px;object-fit:cover;border-radius:6px;">
+                    {% endif %}
+                </a>
+
+                <a href="{% url 'detail' comment.product.pk %}"
+                   style="font-weight:bold;color:#007bff;text-decoration:none;">
+                    {{ comment.product.name }}
+                </a>
             </div>
-        {% empty %}
-            <p>No comments</p>
-        {% endfor %}
-    </div>
+
+            <!-- COMMENT -->
+            <p style="margin:8px 0;">
+                {{ comment.text|truncatechars:100 }}
+            </p>
+
+            <!-- ACTIONS -->
+            <div style="display:flex;gap:10px;">
+                <a href="{% url 'update_comment' comment.pk %}">edit</a>
+
+                <form action="{% url 'delete_comment' comment.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit"
+                            style="background:none;border:none;color:red;cursor:pointer;">
+                        delete
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    {% empty %}
+        <p>No comments</p>
+    {% endfor %}
+</div>
+
+
+
+
+
+
 
 </div>
 
