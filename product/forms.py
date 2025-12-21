@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product
+from .models import Product ,Comments
 
 class ProductForm(forms.ModelForm):
     class Meta:
@@ -17,3 +17,10 @@ class ProductForm(forms.ModelForm):
         if size <= 18:
             raise forms.ValidationError("razmer juda kichik")
         return size
+
+
+class CommentsForm(forms.ModelForm):
+    rate = forms.IntegerField(min_value=0,max_value=5,required=False)
+    class Meta:
+        model = Comments
+        fields = ['text','rate','image_comment']

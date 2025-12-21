@@ -19,6 +19,7 @@
         <p><strong>Brand:</strong> {{ product.make }}</p>
         <p><strong>Category:</strong> {{ product.category }}</p>
         <p><strong>Price:</strong> {{ product.price }} $</p>
+        <p><strong>Baho:</strong> {{ product.avr_rate }}</p>
         <p><strong>Size:</strong> {{ product.size }}</p>
         <p><strong>Country:</strong> {{ product.country }}</p>
         <p><strong>Description:</strong> {{ product.desc }}</p>
@@ -28,66 +29,145 @@
             <a href="{% url 'delete' product.id %}" class="btn delete">Delete</a>
             <a href="{% url 'home' %}" class="btn back">Back</a>
         </div>
-    </div>
 
+        <hr>
+
+        <!-- COMMENTS LIST -->
+        <div class="comments">
+            <h3>Comments ({{ comments.count }})</h3>
+
+            {% for comment in comments %}
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <span class="author">
+                            {{ comment.user.get_full_name|default:comment.user.username }}
+                        </span>
+                        <span class="date">
+                            {{ comment.create_at|date:"d.m.Y H:i" }}
+                        </span>
+                    </div>
+
+                    {% if comment.rate %}
+                        <div class="rate">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= comment.rate %}
+                                    ★
+                                {% else %}
+                                    ☆
+                                {% endif %}
+                            {% endfor %}
+                            <span class="rate-text">{{ comment.rate }}/5</span>
+                        </div>
+                    {% endif %}
+
+                    <p class="comment-text">{{ comment.text|linebreaks }}</p>
+
+                    {% if comment.image_comment %}
+                        <img src="{{ comment.image_comment.url }}"
+                             class="comment-image">
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="no-comments">Пока нет комментариев</p>
+            {% endfor %}
+        </div>
+
+        <hr>
+
+        <!-- COMMENT FORM -->
+        {% if request.user.is_authenticated %}
+        <div class="comment-form-wrapper">
+            <h3>Оставить комментарий</h3>
+
+            <form method="post"
+                  enctype="multipart/form-data"
+                  action="{% url 'create_comment' product.id %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    {{ form.text }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.rate }}
+                </div>
+
+                <div class="form-group">
+                    {{ form.image_comment }}
+                </div>
+
+                <button type="submit" class="btn submit">
+                    Отправить
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+    </div>
 </div>
 
 <style>
 .detail-wrapper {
     display: flex;
     gap: 30px;
-    align-items: flex-start;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
 }
 
-.image-box {
-    width: 40%;
-}
-
+.image-box { flex: 1; min-width: 300px; }
 .image-box img {
     width: 100%;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .no-image {
-    height: 300px;
+    height: 400px;
     background: #eee;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #777;
-    border-radius: 10px;
 }
 
-.info-box {
-    width: 60%;
-}
-
-.info-box h2 {
-    margin-top: 0;
-}
-
-.actions {
-    margin-top: 20px;
-}
+.info-box { flex: 2; min-width: 300px; }
 
 .btn {
-    padding: 8px 14px;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-right: 10px;
+    padding: 10px 18px;
+    border-radius: 8px;
     color: #fff;
+    text-decoration: none;
 }
 
-.edit {
-    background: #007bff;
+.edit { background: #007bff; }
+.delete { background: #dc3545; }
+.back { background: #6c757d; }
+.submit { background: #28a745; }
+
+.comment-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
 }
 
-.delete {
-    background: #dc3545;
+.rate { color: orange; font-size: 20px; }
+
+.comment-image {
+    max-width: 200px;
+    margin-top: 10px;
+    border-radius: 8px;
 }
 
-.back {
-    background: #6c757d;
+.comment-form-wrapper {
+    margin-top: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.form-group {
+    margin-bottom: 12px;
 }
 </style>
 {% endblock %}

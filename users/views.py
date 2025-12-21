@@ -56,8 +56,11 @@ class ProfileView(LoginRequiredMixin, View):
     login_url = 'login'
     def get(self, request):
         user = request.user
+        comments = user.user_comments.all().order_by('-id')
         products = user.products.all().order_by('-id')
-        return render(request, 'user/profile.html',{'user':user,'products':products})
+        context = {'user':user,'products':products,'comments':comments}
+        return render(request, 'user/profile.html',context)
+
 
 
 class ProfileUpdateView(LoginRequiredMixin, View):
